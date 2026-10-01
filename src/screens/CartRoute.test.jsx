@@ -1,0 +1,41 @@
+import { cleanup, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+// An empty cart is enough: the notice sits above whatever the cart holds.
+vi.mock('@sepetakhq/storefront-kit/cart/CartProvider', () => ({ useCart: () => ({ isEmpty: true }), MAX_QTY: 99 }));
+vi.mock('@sepetakhq/storefront-kit/cart/useCartLines', () => ({
+  useCartLines: () => ({ lines: [], statuses: [], subtotal: 0, isLoading: false, hasBlockers: false, preorderLeadDays: 0 }),
+}));
+vi.mock('@sepetakhq/storefront-kit/config/ConfigProvider', () => ({ useConfig: () => ({ freeShipping: false }) }));
+
+const { default: CartRoute } = await import('./CartRoute.jsx');
+const { stockNotice } = await import('../lib/copy.js');
+
+afterEach(cleanup);
+
+function visit(state) {
+  return render(
+    <MemoryRouter initialEntries={[{ pathname: '/keranjang', state }]}>
+      <CartRoute />
+    </MemoryRouter>,
+  );
+}
+
+describe('CartRoute', () => {
+  it('says why checkout sent the buyer back when stock changed', () => {
+    visit({ stockChanged: true });
+    expect(screen.getByRole('status').textContent).toBe(stockNotice({ stockChanged: true }));
+  });
+
+  it('words it differently when the code was already verified', () => {
+    visit({ stockChanged: true, afterVerify: true });
+    expect(screen.getByRole('status').textContent).toBe(stockNotice({ stockChanged: true, afterVerify: true }));
+  });
+
+  it('says nothing on an ordinary visit', () => {
+    visit(undefined);
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.getByText('Keranjangmu masih kosong')).toBeTruthy();
+  });
+});
