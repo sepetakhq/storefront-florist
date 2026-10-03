@@ -169,6 +169,9 @@ h1, h2, h3, h4 { font-family: var(--fl-display); font-weight: 400; color: var(--
 .fl-choice { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--fl-line-2); background: var(--fl-paper); color: var(--fl-ink); }
 .fl-choice[aria-checked="true"] { border-color: var(--fl-primary); background: var(--fl-success-bg); }
 .fl-choice:disabled { opacity: .5; }
+/* The method's or courier's badge, beside the price: names stay aligned whether a row has one or not. */
+.fl-choice-logo { display: block; height: 20px; width: auto; max-width: 64px; object-fit: contain; flex: none; }
+@media (max-width: 480px) { .fl-choice-logo { height: 16px; max-width: 48px; } }
 .fl-radio { width: 18px; height: 18px; border-radius: 999px; border: 1.5px solid var(--fl-line-3); display: grid; place-items: center; flex: none; }
 .fl-choice[aria-checked="true"] .fl-radio { border-color: var(--fl-primary); }
 .fl-choice[aria-checked="true"] .fl-radio::after { content: ''; width: 8px; height: 8px; border-radius: 999px; background: var(--fl-primary); }
@@ -423,7 +426,10 @@ body[data-menu="1"] { overflow: hidden; }
 .fl-footer a.fl-social:hover { border-color: var(--fl-paper); color: var(--fl-paper); }
 .fl-footer-chips { display: flex; flex-direction: column; gap: 8px; }
 .fl-footer-chips > div { display: flex; flex-wrap: wrap; gap: 6px; }
-.fl-footer-chips span { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: var(--fl-on-dark-chip); }
+.fl-footer-chips span { display: inline-flex; align-items: center; min-height: 28px; box-sizing: border-box; font-size: 12px; padding: 5px 10px; border-radius: 999px; background: var(--fl-on-dark-chip); }
+/* A badge sits on the page's own cream: a full-colour mark is unreadable on the green. */
+.fl-footer-chips .fl-logo-chip { background: var(--fl-surface); padding: 5px 12px; }
+.fl-logo-chip img { display: block; height: 16px; width: auto; max-width: 76px; object-fit: contain; }
 .fl-footer-bottom { max-width: var(--fl-max); margin: 0 auto; padding: 0 var(--fl-gutter); }
 .fl-footer-bottom > div { padding: 18px 0 24px; border-top: 1px solid var(--fl-on-dark-rule); font-size: 13px; color: var(--fl-on-dark-2); }
 

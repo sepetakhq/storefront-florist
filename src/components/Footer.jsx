@@ -97,8 +97,8 @@ export default function Footer() {
               <div className="fl-footer-chips">
                 <h4>{s('footer_payment_heading')}</h4>
                 <div>
-                  {payments.map((m) => (
-                    <span key={m.code}>{m.name}</span>
+                  {chips(payments).map((m) => (
+                    <Chip key={m.code} item={m} />
                   ))}
                 </div>
               </div>
@@ -107,8 +107,8 @@ export default function Footer() {
               <div className="fl-footer-chips">
                 <h4>{s('footer_shipping_heading')}</h4>
                 <div>
-                  {ships.map((c, i) => (
-                    <span key={`${c.code}-${i}`}>{c.name}</span>
+                  {chips(ships).map((c, i) => (
+                    <Chip key={`${c.code}-${i}`} item={c} />
                   ))}
                 </div>
               </div>
@@ -123,5 +123,24 @@ export default function Footer() {
         </div>
       )}
     </footer>
+  );
+}
+
+/**
+ * One chip per badge: "VA BCA" and "Transfer BCA", or JNE REG and JNE YES,
+ * are the same mark to a buyer checking whether the shop takes their bank or
+ * ships with their courier. A name the platform has no badge for stays text.
+ */
+export function chips(items) {
+  const seen = new Set();
+  return items.filter((x) => !x.logo_url || (!seen.has(x.logo_url) && seen.add(x.logo_url)));
+}
+
+function Chip({ item }) {
+  if (!item.logo_url) return <span>{item.name}</span>;
+  return (
+    <span className="fl-logo-chip" title={item.name}>
+      <img src={item.logo_url} alt={item.name} loading="lazy" />
+    </span>
   );
 }

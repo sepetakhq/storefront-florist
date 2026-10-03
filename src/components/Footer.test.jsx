@@ -48,6 +48,30 @@ describe('Footer', () => {
     expect(screen.getByRole('link', { name: 'TikTok' }).getAttribute('href')).toBe('https://tiktok.com/@a');
   });
 
+  it("draws the server's badge in place of a name, once per badge, and keeps names it has none for", () => {
+    const bca = 'http://api.test/logos/payment/bca.svg';
+    const jne = 'http://api.test/logos/courier/jne.svg';
+    const { container } = setup({}, {
+      payments: [
+        { code: 'BCA', name: 'VA BCA', enabled: true, logo_url: bca },
+        { code: 'MANUAL_BCA', name: 'Transfer BCA', enabled: true, logo_url: bca },
+        { code: 'MANUAL_BANK_1', name: 'Transfer SeaBank', enabled: true },
+      ],
+      couriers: [
+        { code: 'toko', name: 'Kurir Toko', enabled: true },
+        { code: 'jne', name: 'JNE REG', enabled: true, logo_url: jne },
+        { code: 'jne', name: 'JNE YES', enabled: true, logo_url: jne },
+      ],
+    });
+    const imgs = [...container.querySelectorAll('.fl-logo-chip img')];
+    expect(imgs.map((i) => i.getAttribute('src'))).toEqual([bca, jne]);
+    // The first name behind a badge is how it is read aloud.
+    expect(screen.getByRole('img', { name: 'VA BCA' })).toBeTruthy();
+    expect(screen.queryByRole('img', { name: 'Transfer BCA' })).toBeNull();
+    expect(screen.getByText('Transfer SeaBank')).toBeTruthy();
+    expect(screen.getByText('Kurir Toko')).toBeTruthy();
+  });
+
   it("uses the shop's column titles", () => {
     setup({ sections: { footer_shop_heading: 'Jelajah', footer_contact_heading: 'Hubungi', footer_payment_heading: 'Bayar', footer_shipping_heading: 'Kirim', footer_categories_heading: 'Ruangan' } });
     for (const t of ['Jelajah', 'Hubungi', 'Ruangan']) expect(screen.getByRole('heading', { name: t })).toBeTruthy();
