@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useCart } from '@sepetakhq/storefront-kit/cart/CartProvider';
 import { isPriceRange, lineKey } from '@sepetakhq/storefront-kit/lib/variants';
 import { useToast } from '@sepetakhq/storefront-kit/ui/ToastProvider';
-import { fmt } from '@sepetakhq/storefront-kit/shared/format';
+import { fmt, formatQty } from '@sepetakhq/storefront-kit/shared/format';
+import { qtyLimits, stepQty } from '@sepetakhq/storefront-kit/shared/qty';
 
 import { Img, SIZES } from '../ui/Img.jsx';
 import Icon from '../ui/Icon.jsx';
@@ -111,13 +112,14 @@ export function QuickAdd({ p }) {
       </button>
     );
   }
+  const limits = qtyLimits(p);
   return (
     <div className="fl-stepper" role="group" aria-label={`Jumlah ${p.name}`}>
-      <button type="button" aria-label="Kurangi" onClick={() => (qty <= 1 ? cart.remove(key) : cart.setQty(key, qty - 1))}>
+      <button type="button" aria-label="Kurangi" onClick={() => { const n = stepQty(qty, -1, limits); return n === 0 ? cart.remove(key) : cart.setQty(key, n); }}>
         −
       </button>
-      <output aria-live="polite">{qty}</output>
-      <button type="button" aria-label="Tambah" disabled={qty >= state.max} onClick={() => cart.setQty(key, qty + 1)}>
+      <output aria-live="polite">{formatQty(qty, limits.unit)}</output>
+      <button type="button" aria-label="Tambah" disabled={stepQty(qty, 1, limits) > state.max} onClick={() => cart.setQty(key, stepQty(qty, 1, limits))}>
         +
       </button>
     </div>

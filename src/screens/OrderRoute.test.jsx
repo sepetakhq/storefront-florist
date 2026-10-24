@@ -56,3 +56,16 @@ describe('OrderRoute: loyalty points', () => {
     expect(screen.queryByText(/Poin|Points/)).toBeNull();
   });
 });
+
+describe('OrderRoute: sale units', () => {
+  it('prints a kg line in kg and a pcs line as a bare count', () => {
+    draw({
+      lines: [
+        { id: 'l1', name: 'Kibble', qty: 1250, unit: 'kg', unit_price: 60000, line_total: 75000 },
+        { id: 'l2', name: 'Mainan', qty: 2, unit: 'pcs', unit_price: 10000, line_total: 20000 },
+      ],
+    });
+    expect(screen.getByText('Rp 60.000 × 1,25 kg')).toBeTruthy();
+    expect(screen.getByText('Rp 10.000 × 2')).toBeTruthy();
+  });
+});
