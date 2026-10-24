@@ -431,7 +431,9 @@ body[data-menu="1"] { overflow: hidden; }
 .fl-footer-chips .fl-logo-chip { background: var(--fl-surface); padding: 5px 12px; }
 .fl-logo-chip img { display: block; height: 16px; width: auto; max-width: 76px; object-fit: contain; }
 .fl-footer-bottom { max-width: var(--fl-max); margin: 0 auto; padding: 0 var(--fl-gutter); }
-.fl-footer-bottom > div { padding: 18px 0 24px; border-top: 1px solid var(--fl-on-dark-rule); font-size: 13px; color: var(--fl-on-dark-2); }
+.fl-footer-bottom > div { padding: 18px 0 24px; border-top: 1px solid var(--fl-on-dark-rule); display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--fl-on-dark-2); }
+.fl-footer a.fl-footer-badge { font-size: 12px; color: var(--fl-on-dark-2); white-space: nowrap; }
+.fl-footer a.fl-footer-badge:hover { color: var(--fl-paper); }
 
 /* --- loading shimmer --------------------------------------------------- */
 .fl-shimmer {

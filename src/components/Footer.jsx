@@ -15,7 +15,10 @@ import { footerLinks, sectionText, socialLabel } from '../lib/copy.js';
  * footer rather than headings over nothing.
  */
 export default function Footer() {
-  const { brand, paymentMethods, couriers } = useConfig();
+  const { brand, paymentMethods, couriers, tenant } = useConfig();
+  // The platform's mark, on the plans that carry it. Absent on an older API
+  // version, which strips the field, so nothing is drawn.
+  const badge = tenant?.sepetak_badge === true;
   const { data: categories } = useCategories();
   const payments = (paymentMethods ?? []).filter((m) => m.enabled && m.name);
   const ships = (couriers ?? []).filter((c) => c.enabled && c.name);
@@ -117,9 +120,16 @@ export default function Footer() {
         )}
       </div>
 
-      {brand.copyright && (
+      {(brand.copyright || badge) && (
         <div className="fl-footer-bottom">
-          <div>{brand.copyright}</div>
+          <div>
+            {brand.copyright && <span>{brand.copyright}</span>}
+            {badge && (
+              <a href="https://sepetak.com/?ref=toko" target="_blank" rel="noopener" className="fl-footer-badge">
+                Dibuat dengan Sepetak
+              </a>
+            )}
+          </div>
         </div>
       )}
     </footer>

@@ -403,3 +403,30 @@ describe('ProductRoute shop labels', () => {
   });
 });
 });
+
+// Sold by weight: qty counts grams, the screen speaks kg.
+describe('ProductRoute sale units', () => {
+  afterEach(() => {
+    cartCalls.length = 0;
+  });
+
+  it('prices per kg and steps a kg product by its qty_step from qty_min', () => {
+    withProduct({ price: 80000, unit: 'kg', qty_step: 100, qty_min: 500, stock: 5000 });
+    panel();
+    expect(screen.getByText('/kg')).toBeTruthy();
+    expect(screen.getByText('0,5 kg')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Kurangi jumlah' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: `Tambah ke keranjang · ${fmt(40000)}` })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Tambah jumlah' }));
+    expect(screen.getByText('0,6 kg')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: `Tambah ke keranjang · ${fmt(48000)}` }));
+    expect(cartCalls[0][1]).toBe(600);
+  });
+
+  it('leaves a pcs product as a bare count with no unit after the price', () => {
+    withProduct({ stock: 40 });
+    panel();
+    expect(screen.queryByText(/^\/(kg|pcs)$/)).toBeNull();
+    expect(screen.getByText('1')).toBeTruthy();
+  });
+});

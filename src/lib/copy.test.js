@@ -76,9 +76,10 @@ describe('quickAddState', () => {
     expect(quickAddState(base, 0)).toEqual({ kind: 'add', max: 5 });
     expect(quickAddState(base, 2)).toEqual({ kind: 'stepper', max: 5 });
   });
-  it('caps an uncounted or pre-order product at MAX_QTY only', () => {
+  it('caps an uncounted or pre-order product at the line limit only', () => {
     expect(quickAddState({ ...base, stock: 0, unlimited_stock: true }, 1).max).toBe(99);
     expect(quickAddState({ ...base, stock: 0, preorder: true }, 0).max).toBe(99);
+    expect(quickAddState({ ...base, stock: 0, unlimited_stock: true, unit: 'kg', qty_step: 100 }, 1).max).toBe(99000);
   });
   it('trusts the server over a missing availability field', () => {
     expect(quickAddState({ id: 'p', stock: 3 }, 0).kind).toBe('add');
@@ -91,6 +92,8 @@ describe('cardNote / cardVeil', () => {
     expect(cardNote({ ...base, preorder: true, preorder_lead_days: 5 })).toBe('Pre-order · ±5 hari setelah pembayaran');
     expect(cardNote({ ...base, preorder: true, preorder_lead_days: 0 })).toBe('Pre-order · dibuat setelah dipesan');
     expect(cardNote({ ...base, stock: 4 })).toBe('Sisa 4 lagi');
+    expect(cardNote({ ...base, stock: 1500, unit: 'kg' })).toBe('Sisa 1,5 kg lagi');
+    expect(cardNote({ ...base, stock: 24000, unit: 'kg' })).toBe('');
     expect(cardNote({ ...base, stock: 24 })).toBe('');
     expect(cardNote({ ...base, stock: 3, unlimited_stock: true })).toBe('');
     expect(cardNote({ ...base, stock: 0, sold_out: true, availability: 'sold_out' })).toBe('');
@@ -112,6 +115,7 @@ describe('detailNote / pickPrompt', () => {
     expect(detailNote({ ...base, preorder: true, preorder_lead_days: 5 })).toBe('Pre-order · dikirim ±5 hari setelah pembayaran');
     expect(detailNote({ ...base, preorder: true, preorder_lead_days: 0 })).toBe('Pre-order · dibuat setelah pembayaran');
     expect(detailNote({ ...base, stock: 3 })).toBe('Sisa 3 lagi — segera checkout');
+    expect(detailNote({ ...base, stock: 2500, unit: 'kg' })).toBe('Sisa 2,5 kg lagi — segera checkout');
     expect(detailNote({ ...base, stock: 3, unlimited_stock: true })).toBe('');
     expect(detailNote(base)).toBe('');
   });
